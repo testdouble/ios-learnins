@@ -26,7 +26,8 @@ describe(@"RedditService", ^{
                   @{
                     @"data": @{
                       @"title": @"a post!",
-                      @"url": @"https://reddit.com/r/a-post/post123"
+                      @"url": @"https://reddit.com/r/a-post/post123",
+                      @"score": @42
                     }
                   }
                 ]
@@ -54,6 +55,11 @@ describe(@"RedditService", ^{
       it(@"gets a post url", ^{
         [[expectFutureValue(((RedditPost*) posts.firstObject).url) shouldEventually]
          equal:@"https://reddit.com/r/a-post/post123"];
+      });
+
+      it(@"gets a post score", ^{
+        [[expectFutureValue(theValue(((RedditPost*) posts.firstObject).score)) shouldEventually]
+         equal:theValue(42)];
       });
     });
 });
