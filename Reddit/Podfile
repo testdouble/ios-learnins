@@ -1,5 +1,7 @@
 platform :ios, '8.1'
 
+pod 'AFNetworking'
+
 target :RedditTests do
   pod 'Kiwi'
   pod 'OHHTTPStubs'
