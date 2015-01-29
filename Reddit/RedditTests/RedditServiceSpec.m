@@ -20,7 +20,8 @@ describe(@"RedditService", ^{
             return [request.URL.host isEqualToString:@"reddit.com"];
             
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-            return [OHHTTPStubsResponse responseWithData:[@"{data: {children: [{data: {title: 'a post!'}}]}}" dataUsingEncoding:NSUTF8StringEncoding] statusCode:200 headers:@{@"Content-Type":@"text/json"}];
+            NSDictionary* json = @{ @"data": @{ @"children": @[ @{ @"data": @{ @"title": @"a post!" } } ] } };
+            return [OHHTTPStubsResponse responseWithJSONObject:json statusCode:200 headers:@{@"Content-Type":@"text/json"}];
         }];
     });
 
@@ -32,10 +33,7 @@ describe(@"RedditService", ^{
             posts = returnedPosts;
         }];
         
-        RedditPost* expectedPost = [[RedditPost alloc] init];
-        [expectedPost setTitle: @"a post!"];
-        NSArray* expectedPosts = @[ expectedPost ];
-        [[expectFutureValue(posts) shouldEventually] equal:expectedPosts];
+        [[expectFutureValue(((RedditPost*) posts.firstObject).title) shouldEventually] equal:@"a post!"];
     });
     
 });
