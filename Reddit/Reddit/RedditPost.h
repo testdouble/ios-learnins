@@ -13,4 +13,6 @@
 @property (strong, nonatomic) NSString* title;
 @property (strong, nonatomic) NSString* url;
 
++ (RedditPost*) withData:(NSDictionary*)post;
+
 @end

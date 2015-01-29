@@ -10,4 +10,10 @@
 
 @implementation RedditPost
 
++ (RedditPost*) withData:(NSDictionary*)post {
+  RedditPost *redditPost = [[RedditPost alloc] init];
+  redditPost.title = [post valueForKeyPath:@"data.title"];
+  redditPost.url = [post valueForKeyPath:@"data.url"];
+  return redditPost;
+}
 @end
