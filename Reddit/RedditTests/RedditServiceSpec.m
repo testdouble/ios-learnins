@@ -20,22 +20,48 @@ describe(@"RedditService", ^{
             return [request.URL.host isEqualToString:@"reddit.com"];
             
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-            NSDictionary* json = @{ @"data": @{ @"children": @[ @{ @"data": @{ @"title": @"a post!" } } ] } };
+            NSDictionary* json = @{
+              @"data": @{
+                @"children": @[
+                  @{
+                    @"data": @{
+                      @"title": @"a post!",
+                      @"url": @"https://reddit.com/r/a-post/post123",
+                      @"score": @42
+                    }
+                  }
+                ]
+              }
+            };
             return [OHHTTPStubsResponse responseWithJSONObject:json statusCode:200 headers:@{@"Content-Type":@"text/json"}];
         }];
     });
 
-    it(@"gets a post", ^{
+    describe(@"posts", ^{
+      __block NSArray *posts;
+
+      beforeEach(^{
         RedditService* service = [[RedditService alloc] init];
-        
-        __block NSArray* posts;
+
         [service getPosts:^(NSArray* returnedPosts){
-            posts = returnedPosts;
+          posts = returnedPosts;
         }];
-        
+      });
+
+      it(@"gets a post title", ^{
         [[expectFutureValue(((RedditPost*) posts.firstObject).title) shouldEventually] equal:@"a post!"];
+      });
+
+      it(@"gets a post url", ^{
+        [[expectFutureValue(((RedditPost*) posts.firstObject).url) shouldEventually]
+         equal:@"https://reddit.com/r/a-post/post123"];
+      });
+
+      it(@"gets a post score", ^{
+        [[expectFutureValue(theValue(((RedditPost*) posts.firstObject).score)) shouldEventually]
+         equal:theValue(42)];
+      });
     });
-    
 });
 
 SPEC_END

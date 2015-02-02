@@ -11,5 +11,9 @@
 @interface RedditPost : NSObject
 
 @property (strong, nonatomic) NSString* title;
+@property (strong, nonatomic) NSString* url;
+@property (nonatomic) NSInteger score;
+
++ (RedditPost*) withData:(NSDictionary*)post;
 
 @end
