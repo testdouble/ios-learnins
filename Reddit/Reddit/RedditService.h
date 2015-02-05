@@ -10,6 +10,7 @@
 
 @interface RedditService : NSObject
 
+-(void)getRooms:(void (^)(NSArray *))callback;
 -(void)getPosts:(void (^)(NSArray *))callback;
 
 @end

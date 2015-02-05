@@ -8,9 +8,30 @@
 
 #import "RedditService.h"
 #import "RedditPost.h"
+#import "RedditRoom.h"
 #import "AFNetworking.h"
 
 @implementation RedditService
+
+-(void)getRooms:(void (^)(NSArray *))callback {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+
+    [manager GET:@"http://reddit.com/" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSArray *rooms = [responseObject valueForKeyPath:@"data.children"];
+        __block NSArray *results = [NSArray array];
+
+        [rooms enumerateObjectsUsingBlock:^(NSDictionary *room, NSUInteger idx, BOOL *stop) {
+            RedditRoom *redditRoom = [[RedditRoom alloc] init];
+            redditRoom.name = [room valueForKeyPath:@"data.name"];
+            results = [results arrayByAddingObject:redditRoom];
+        }];
+
+        callback(results);
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
 
 -(void)getPosts:(void (^)(NSArray *))callback {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];

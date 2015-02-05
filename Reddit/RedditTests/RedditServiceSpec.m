@@ -10,6 +10,7 @@
 #import "OHHTTPStubs.h"
 #import "RedditService.h"
 #import "RedditPost.h"
+#import "RedditRoom.h"
 
 SPEC_BEGIN(RedditServiceSpec)
 
@@ -17,7 +18,26 @@ describe(@"RedditService", ^{
     
     beforeEach(^{
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-            return [request.URL.host isEqualToString:@"reddit.com"];
+            return  [request.URL.host isEqualToString:@"reddit.com"] &&
+            [request.URL.path isEqualToString:@"/"];
+
+        } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+            NSDictionary* json = @{
+                @"data": @{
+                    @"children": @[
+                        @{
+                            @"data": @{
+                                @"name": @"awww"
+                            }
+                        }
+                    ]
+                }
+            };
+            return [OHHTTPStubsResponse responseWithJSONObject:json statusCode:200 headers:@{@"Content-Type":@"text/json"}];
+        }];
+        [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+            return  [request.URL.host isEqualToString:@"reddit.com"] &&
+                    [request.URL.path isEqualToString:@"/r/aww.json"];
             
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
             NSDictionary* json = @{
@@ -35,6 +55,22 @@ describe(@"RedditService", ^{
             };
             return [OHHTTPStubsResponse responseWithJSONObject:json statusCode:200 headers:@{@"Content-Type":@"text/json"}];
         }];
+    });
+
+    describe(@"rooms", ^{
+        __block NSArray *rooms;
+
+        beforeEach(^{
+            RedditService* service = [[RedditService alloc] init];
+
+            [service getRooms:^(NSArray* returnedRooms){
+                rooms = returnedRooms;
+            }];
+        });
+
+        it(@"gets rooms", ^{
+            [[expectFutureValue(((RedditRoom*) rooms.firstObject).name) shouldEventually] equal:@"awww"];
+        });
     });
 
     describe(@"posts", ^{
