@@ -41,7 +41,7 @@
         __block NSArray *results = [NSArray array];
         
         [posts enumerateObjectsUsingBlock:^(NSDictionary *post, NSUInteger idx, BOOL *stop) {
-          RedditPost *redditPost = [RedditPost withData:post];
+          RedditPost *redditPost = [RedditPost postWithJSON:post];
           results = [results arrayByAddingObject:redditPost];
         }];
         
