@@ -11,6 +11,7 @@
 @interface RedditRoom : NSObject
 
 @property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *url;
 
 + (instancetype)roomWithJSON:(NSDictionary*)json;
 

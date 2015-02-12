@@ -35,7 +35,7 @@
 -(void)getPosts:(void (^)(NSArray *))callback {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     
-    [manager GET:@"http://reddit.com/r/aww.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:@"http://reddit.com/r/awww.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSArray *posts = [responseObject valueForKeyPath:@"data.children"];
         __block NSArray *results = [NSArray array];
         

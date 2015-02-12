@@ -23,21 +23,22 @@ describe(@"RedditService", ^{
 
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
             NSDictionary* json = @{
-                @"data": @{
-                    @"children": @[
-                        @{
-                            @"data": @{
-                                @"name": @"awww"
-                            }
-                        }
-                    ]
-                }
+              @"data": @{
+                @"children": @[
+                  @{
+                    @"data": @{
+                      @"name": @"awww",
+                      @"url": @"https://reddit.com/r/awww"
+                    }
+                  }
+                ]
+              }
             };
             return [OHHTTPStubsResponse responseWithJSONObject:json statusCode:200 headers:@{@"Content-Type":@"text/json"}];
         }];
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
             return  [request.URL.host isEqualToString:@"reddit.com"] &&
-                    [request.URL.path isEqualToString:@"/r/aww.json"];
+                    [request.URL.path isEqualToString:@"/r/awww.json"];
             
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
             NSDictionary* json = @{
@@ -68,8 +69,13 @@ describe(@"RedditService", ^{
             }];
         });
 
-        it(@"gets rooms", ^{
+        it(@"gets a room name", ^{
             [[expectFutureValue(((RedditRoom*) rooms.firstObject).name) shouldEventually] equal:@"awww"];
+        });
+
+        it(@"gets a room url", ^{
+            [[expectFutureValue(((RedditRoom*) rooms.firstObject).url) shouldEventually]
+             equal:@"https://reddit.com/r/awww"];
         });
     });
 

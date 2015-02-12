@@ -14,6 +14,7 @@
     RedditRoom *room = [[self alloc] init];
 
     room.name = [json valueForKeyPath:@"data.name"];
+    room.url = [json valueForKeyPath:@"data.url"];
     return room;
 }
 
