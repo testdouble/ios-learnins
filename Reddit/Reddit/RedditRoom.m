@@ -10,4 +10,11 @@
 
 @implementation RedditRoom
 
++ (instancetype)roomWithJSON:(NSDictionary*)json {
+    RedditRoom *room = [[self alloc] init];
+
+    room.name = [json valueForKeyPath:@"data.name"];
+    return room;
+}
+
 @end

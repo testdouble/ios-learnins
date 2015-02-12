@@ -21,8 +21,7 @@
         __block NSArray *results = [NSArray array];
 
         [rooms enumerateObjectsUsingBlock:^(NSDictionary *room, NSUInteger idx, BOOL *stop) {
-            RedditRoom *redditRoom = [[RedditRoom alloc] init];
-            redditRoom.name = [room valueForKeyPath:@"data.name"];
+            RedditRoom *redditRoom = [RedditRoom roomWithJSON:room];
             results = [results arrayByAddingObject:redditRoom];
         }];
 

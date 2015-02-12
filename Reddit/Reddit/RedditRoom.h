@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface RedditRoom : NSObject
+
 @property (strong, nonatomic) NSString *name;
+
++ (instancetype)roomWithJSON:(NSDictionary*)json;
 
 @end
