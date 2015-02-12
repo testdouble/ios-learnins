@@ -84,8 +84,13 @@ describe(@"RedditService", ^{
 
       beforeEach(^{
         RedditService* service = [[RedditService alloc] init];
-
-        [service getPosts:^(NSArray* returnedPosts){
+          RedditRoom *room = [RedditRoom roomWithJSON:@{
+            @"data": @{
+              @"name": @"awww",
+              @"url": @"https://reddit.com/r/awww"
+            }
+          }];
+        [service getPostsForRoom:room callback:^(NSArray* returnedPosts){
           posts = returnedPosts;
         }];
       });

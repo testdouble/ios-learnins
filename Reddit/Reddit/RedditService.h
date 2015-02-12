@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+@class RedditRoom;
+
 @interface RedditService : NSObject
 
 -(void)getRooms:(void (^)(NSArray *))callback;
--(void)getPosts:(void (^)(NSArray *))callback;
+-(void)getPostsForRoom:(RedditRoom*)room callback:(void (^)(NSArray *))callback;
 
 @end

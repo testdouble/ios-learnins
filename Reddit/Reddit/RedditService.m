@@ -32,7 +32,7 @@
     }];
 }
 
--(void)getPosts:(void (^)(NSArray *))callback {
+-(void)getPostsForRoom:(RedditRoom *)room callback:(void (^)(NSArray *))callback {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     
     [manager GET:@"http://reddit.com/r/awww.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
