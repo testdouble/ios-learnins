@@ -35,7 +35,7 @@
 -(void)getPostsForRoom:(RedditRoom *)room callback:(void (^)(NSArray *))callback {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     
-    [manager GET:@"http://reddit.com/r/awww.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:room.url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSArray *posts = [responseObject valueForKeyPath:@"data.children"];
         __block NSArray *results = [NSArray array];
         

@@ -38,7 +38,7 @@ describe(@"RedditService", ^{
         }];
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
             return  [request.URL.host isEqualToString:@"reddit.com"] &&
-                    [request.URL.path isEqualToString:@"/r/awww.json"];
+                    [request.URL.path isEqualToString:@"/r/swift.json"];
             
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
             NSDictionary* json = @{
@@ -79,20 +79,25 @@ describe(@"RedditService", ^{
         });
     });
 
-    describe(@"posts", ^{
+  describe(@"posts", ^{
       __block NSArray *posts;
+      __block id mockRoom;
 
       beforeEach(^{
         RedditService* service = [[RedditService alloc] init];
-          RedditRoom *room = [RedditRoom roomWithJSON:@{
-            @"data": @{
-              @"name": @"awww",
-              @"url": @"https://reddit.com/r/awww"
-            }
-          }];
-        [service getPostsForRoom:room callback:^(NSArray* returnedPosts){
+        mockRoom = [KWMock nullMockForClass:[RedditRoom class]];
+        // This mock doesn't match the real interface of RedditRoom at this time.
+        // After looking at the real API data, we realized some of our assumptions
+        // were incorrect, so we're redefining the contract in this mock.
+        [mockRoom stub:@selector(url) andReturn:@"https://reddit.com/r/swift.json"];
+
+        [service getPostsForRoom:mockRoom callback:^(NSArray* returnedPosts) {
           posts = returnedPosts;
         }];
+      });
+
+      it(@"requests data from the given room", ^{
+        [[mockRoom shouldEventually] receive:@selector(url)];
       });
 
       it(@"gets a post title", ^{
