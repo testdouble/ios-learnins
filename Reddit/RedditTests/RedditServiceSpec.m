@@ -10,6 +10,7 @@
 #import "OHHTTPStubs.h"
 #import "RedditService.h"
 #import "RedditPost.h"
+#import "RedditRoom.h"
 
 SPEC_BEGIN(RedditServiceSpec)
 
@@ -17,7 +18,27 @@ describe(@"RedditService", ^{
     
     beforeEach(^{
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-            return [request.URL.host isEqualToString:@"reddit.com"];
+            return  [request.URL.host isEqualToString:@"reddit.com"] &&
+            [request.URL.path isEqualToString:@"/"];
+
+        } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+            NSDictionary* json = @{
+              @"data": @{
+                @"children": @[
+                  @{
+                    @"data": @{
+                      @"name": @"awww",
+                      @"url": @"https://reddit.com/r/awww"
+                    }
+                  }
+                ]
+              }
+            };
+            return [OHHTTPStubsResponse responseWithJSONObject:json statusCode:200 headers:@{@"Content-Type":@"text/json"}];
+        }];
+        [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+            return  [request.URL.host isEqualToString:@"reddit.com"] &&
+                    [request.URL.path isEqualToString:@"/r/swift.json"];
             
         } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
             NSDictionary* json = @{
@@ -37,15 +58,46 @@ describe(@"RedditService", ^{
         }];
     });
 
-    describe(@"posts", ^{
+    describe(@"rooms", ^{
+        __block NSArray *rooms;
+
+        beforeEach(^{
+            RedditService* service = [[RedditService alloc] init];
+
+            [service getRooms:^(NSArray* returnedRooms){
+                rooms = returnedRooms;
+            }];
+        });
+
+        it(@"gets a room name", ^{
+            [[expectFutureValue(((RedditRoom*) rooms.firstObject).name) shouldEventually] equal:@"awww"];
+        });
+
+        it(@"gets a room url", ^{
+            [[expectFutureValue(((RedditRoom*) rooms.firstObject).url) shouldEventually]
+             equal:@"https://reddit.com/r/awww"];
+        });
+    });
+
+  describe(@"posts", ^{
       __block NSArray *posts;
+      __block id mockRoom;
 
       beforeEach(^{
         RedditService* service = [[RedditService alloc] init];
+        mockRoom = [KWMock nullMockForClass:[RedditRoom class]];
+        // This mock doesn't match the real interface of RedditRoom at this time.
+        // After looking at the real API data, we realized some of our assumptions
+        // were incorrect, so we're redefining the contract in this mock.
+        [mockRoom stub:@selector(url) andReturn:@"https://reddit.com/r/swift.json"];
 
-        [service getPosts:^(NSArray* returnedPosts){
+        [service getPostsForRoom:mockRoom callback:^(NSArray* returnedPosts) {
           posts = returnedPosts;
         }];
+      });
+
+      it(@"requests data from the given room", ^{
+        [[mockRoom shouldEventually] receive:@selector(url)];
       });
 
       it(@"gets a post title", ^{

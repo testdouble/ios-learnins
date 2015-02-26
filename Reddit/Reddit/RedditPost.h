@@ -14,6 +14,6 @@
 @property (strong, nonatomic) NSString* url;
 @property (nonatomic) NSInteger score;
 
-+ (RedditPost*) withData:(NSDictionary*)post;
++ (instancetype) postWithJSON:(NSDictionary*)post;
 
 @end

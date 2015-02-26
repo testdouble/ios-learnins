@@ -2,3 +2,5 @@
 Pods
 Podfile.lock
 xcuserdata/
+DerivedData/
+*.xccheckout
